@@ -5,6 +5,21 @@ const statusText = document.getElementById('statusText');
 const apiStatus = document.getElementById('apiStatus');
 const content = document.getElementById('content');
 
+// Q&A elements
+const qaSection = document.getElementById('qaSection');
+const qaHeader = document.getElementById('qaHeader');
+const qaToggle = document.getElementById('qaToggle');
+const qaContent = document.getElementById('qaContent');
+const qaThread = document.getElementById('qaThread');
+const qaTextarea = document.getElementById('qaTextarea');
+const qaCharCount = document.getElementById('qaCharCount');
+const qaButton = document.getElementById('qaButton');
+
+// Store current PR data and conversation
+let currentPRData = null;
+let currentReview = null;
+let qaHistory = [];
+
 // Check AI API availability on load
 checkAPIStatus();
 
@@ -13,12 +28,36 @@ chrome.storage.local.onChanged.addListener((changes) => {
   if (changes.latestReview) {
     displayReview(changes.latestReview.newValue);
   }
+  if (changes.currentPRData) {
+    currentPRData = changes.currentPRData.newValue;
+  }
+  if (changes.qaHistory) {
+    qaHistory = changes.qaHistory.newValue || [];
+    renderQAHistory();
+  }
 });
 
-// Load existing review if available
-chrome.storage.local.get(['latestReview'], (result) => {
+// Load existing review and PR data if available
+chrome.storage.local.get(['latestReview', 'currentPRData', 'qaHistory'], (result) => {
   if (result.latestReview) {
     displayReview(result.latestReview);
+  }
+  if (result.currentPRData) {
+    currentPRData = result.currentPRData;
+  }
+  if (result.qaHistory) {
+    qaHistory = result.qaHistory || [];
+    renderQAHistory();
+  }
+});
+
+// Q&A Event Listeners
+qaHeader.addEventListener('click', toggleQASection);
+qaTextarea.addEventListener('input', updateCharCount);
+qaButton.addEventListener('click', askQuestion);
+qaTextarea.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && e.ctrlKey) {
+    askQuestion();
   }
 });
 
@@ -77,6 +116,9 @@ function displayReview(results) {
   statusDot.classList.remove('loading', 'error');
   statusText.textContent = 'Review Complete';
 
+  // Store current review for Q&A context
+  currentReview = results;
+
   let html = '';
 
   // Display Summary
@@ -109,6 +151,11 @@ function displayReview(results) {
   }
 
   content.innerHTML = html;
+
+  // Show Q&A section after successful review
+  if (results.codeReview) {
+    qaSection.style.display = 'block';
+  }
 }
 
 function formatCodeReview(reviewText) {
@@ -283,6 +330,141 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+// Q&A Functions
+function toggleQASection() {
+  qaContent.classList.toggle('hidden');
+  qaToggle.classList.toggle('collapsed');
+}
+
+function updateCharCount() {
+  const length = qaTextarea.value.length;
+  qaCharCount.textContent = `${length} / 500`;
+  if (length > 500) {
+    qaCharCount.classList.add('over-limit');
+  } else {
+    qaCharCount.classList.remove('over-limit');
+  }
+}
+
+async function askQuestion() {
+  const question = qaTextarea.value.trim();
+
+  if (!question || question.length === 0) {
+    return;
+  }
+
+  if (question.length > 500) {
+    showError('Question is too long. Please keep it under 500 characters.');
+    return;
+  }
+
+  if (!currentPRData || !currentReview) {
+    showError('No PR data available. Please run a review first.');
+    return;
+  }
+
+  // Disable input while processing
+  qaTextarea.disabled = true;
+  qaButton.disabled = true;
+
+  // Show loading indicator
+  const loadingId = showQALoading();
+
+  try {
+    // Send question to background script
+    const response = await chrome.runtime.sendMessage({
+      action: 'askQuestion',
+      data: {
+        question: question,
+        prData: currentPRData,
+        review: currentReview.codeReview,
+        history: qaHistory.slice(-3) // Last 3 Q&As for context
+      }
+    });
+
+    // Remove loading indicator
+    removeQALoading(loadingId);
+
+    if (response && response.success) {
+      // Add to history
+      qaHistory.push({
+        question: question,
+        answer: response.answer,
+        timestamp: Date.now()
+      });
+
+      // Save to storage
+      chrome.storage.local.set({ qaHistory: qaHistory });
+
+      // Render new Q&A
+      renderQAHistory();
+
+      // Clear textarea
+      qaTextarea.value = '';
+      updateCharCount();
+
+      // Scroll to bottom
+      qaThread.scrollTop = qaThread.scrollHeight;
+    } else {
+      showError(response?.error || 'Failed to get answer from AI');
+    }
+  } catch (error) {
+    removeQALoading(loadingId);
+    showError(`Error: ${error.message}`);
+  } finally {
+    qaTextarea.disabled = false;
+    qaButton.disabled = false;
+    qaTextarea.focus();
+  }
+}
+
+function renderQAHistory() {
+  if (!qaHistory || qaHistory.length === 0) {
+    qaThread.innerHTML = `
+      <div class="qa-empty-state">
+        Ask questions about the code review, security concerns, performance issues, or implementation details.
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  qaHistory.forEach((qa) => {
+    html += `
+      <div class="qa-message qa-question">
+        <div class="qa-question-label">Question</div>
+        <div class="qa-question-text">${escapeHtml(qa.question)}</div>
+      </div>
+      <div class="qa-message qa-answer">
+        <div class="qa-answer-label">AI Answer</div>
+        <div class="qa-answer-text">${formatCodeReview(qa.answer)}</div>
+      </div>
+    `;
+  });
+
+  qaThread.innerHTML = html;
+}
+
+function showQALoading() {
+  const loadingId = `qa-loading-${Date.now()}`;
+  const loadingHTML = `
+    <div class="qa-loading" id="${loadingId}">
+      <div class="qa-spinner"></div>
+      <span>AI is thinking...</span>
+    </div>
+  `;
+  qaThread.insertAdjacentHTML('beforeend', loadingHTML);
+  qaThread.scrollTop = qaThread.scrollHeight;
+  return loadingId;
+}
+
+function removeQALoading(loadingId) {
+  const loadingEl = document.getElementById(loadingId);
+  if (loadingEl) {
+    loadingEl.remove();
+  }
 }
 
 // Export for potential use
