@@ -32,6 +32,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true; // Keep channel open for async response
   }
 
+  if (request.action === 'askQuestion') {
+    handleQuestionAnswer(request.data, sendResponse);
+    return true; // Keep channel open for async response
+  }
+
   if (request.action === 'openSidePanel') {
     chrome.sidePanel.open({ windowId: sender.tab.windowId });
   }
@@ -205,6 +210,73 @@ ${prData.diff}
       success: false,
       error: error.message,
       results: { error: error.message }
+    });
+  }
+}
+
+// Handle Q&A about the PR review
+async function handleQuestionAnswer(data, sendResponse) {
+  try {
+    const { question, prData, review, history } = data;
+
+    // Check if AI APIs are available
+    const hasAI = typeof ai !== 'undefined';
+    const hasLanguageModel = typeof LanguageModel !== 'undefined';
+
+    if (!hasAI && !hasLanguageModel) {
+      throw new Error('Chrome AI APIs not available');
+    }
+
+    const languageModelAPI = hasLanguageModel ? LanguageModel : ai.languageModel;
+    const promptAvailability = await languageModelAPI.availability();
+
+    if (promptAvailability !== 'available') {
+      throw new Error(`AI not ready. Status: ${promptAvailability}`);
+    }
+
+    // Build context-aware prompt
+    let contextPrompt = `You are an expert code reviewer assistant. You previously reviewed a pull request and now the developer has a follow-up question.
+
+**Original PR Context:**
+Title: ${prData.title}
+Description: ${prData.description || 'No description'}
+
+**Your Previous Review Summary:**
+${review ? review.substring(0, 1500) : 'No review available'}
+
+`;
+
+    // Add conversation history for context
+    if (history && history.length > 0) {
+      contextPrompt += `**Recent Conversation:**\n`;
+      history.forEach((qa, idx) => {
+        contextPrompt += `Q${idx + 1}: ${qa.question}\nA${idx + 1}: ${qa.answer.substring(0, 300)}\n\n`;
+      });
+    }
+
+    contextPrompt += `**Current Question:**
+${question}
+
+**Instructions:**
+Provide a clear, helpful, and actionable answer. If the question relates to fixing an issue:
+- Explain the problem concisely
+- Provide specific code examples when applicable
+- Suggest best practices
+- Keep the answer focused and under 300 words
+
+Your answer:`;
+
+    // Create AI session and get answer
+    const session = await languageModelAPI.create();
+    const answer = await session.prompt(contextPrompt);
+    session.destroy();
+
+    sendResponse({ success: true, answer: answer });
+
+  } catch (error) {
+    sendResponse({
+      success: false,
+      error: error.message
     });
   }
 }
