@@ -1,0 +1,55 @@
+/* Styles injected into GitHub/GitLab pages */
+
+#codereview-ai-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid;
+  border-radius: 6px;
+  appearance: none;
+  transition: all 0.2s;
+}
+
+/* GitHub styles */
+.btn.btn-sm#codereview-ai-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #5a67d8;
+}
+
+.btn.btn-sm#codereview-ai-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b3fa0 100%);
+  border-color: #4c51bf;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn.btn-sm#codereview-ai-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn.btn-sm#codereview-ai-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* GitLab styles */
+.btn.btn-default.btn-sm#codereview-ai-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #5a67d8;
+}
+
+.btn.btn-default.btn-sm#codereview-ai-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b3fa0 100%);
+  border-color: #4c51bf;
+}
+
+/* Notification styles are inline in content.js for better control */
