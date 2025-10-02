@@ -96,7 +96,7 @@ The first time you use the extension, Chrome needs to download the Gemini Nano m
 
 Open Chrome DevTools Console (F12) and run:
 ```javascript
-await ai.languageModel.availability()
+await LanguageModel.availability()
 // Returns: "downloadable", "downloading", or "available"
 ```
 
@@ -166,7 +166,7 @@ After the review completes, you can ask follow-up questions:
 1. Wait 10-15 minutes (download can be slow on slower connections)
 2. Check download status in DevTools console:
    ```javascript
-   await ai.languageModel.availability()
+   await LanguageModel.availability()
    ```
 3. If stuck, restart Chrome and try again
 4. Ensure you have 3GB+ free disk space
