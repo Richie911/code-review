@@ -49,7 +49,7 @@ AI-powered code review assistant for GitHub and GitLab pull requests using Chrom
 
 1. Clone or download this repository:
    ```bash
-   git clone https://github.com/yourusername/codereview-ai.git
+   git clone https://github.com/yourusername/code-review-ai.git
    ```
 
 2. Open Chrome and navigate to `chrome://extensions/`
@@ -58,7 +58,7 @@ AI-powered code review assistant for GitHub and GitLab pull requests using Chrom
 
 4. Click **"Load unpacked"**
 
-5. Select the `codereview-ai` directory
+5. Select the `code-review` directory
 
 6. The extension icon should appear in your toolbar
 
@@ -205,7 +205,7 @@ After the review completes, you can ask follow-up questions:
 ### Project Structure
 
 ```
-codereview-ai/
+code-review/
 ├── manifest.json       # Extension configuration (Manifest V3)
 ├── background.js       # Service worker for AI API calls
 ├── content.js          # Content script for PR page injection
@@ -332,7 +332,7 @@ Contributions are welcome! Here's how you can help:
 **Development Setup:**
 ```bash
 git clone
-cd codereview-ai
+cd code-review
 # Load extension in chrome://extensions/
 # Make changes and reload extension to test
 ```
