@@ -105,8 +105,12 @@ async function handleAIReview() {
     });
 
     if (response && response.success) {
-      // Store results for sidebar
-      chrome.storage.local.set({ latestReview: response.results });
+      // Store results and PR data for sidebar and Q&A
+      chrome.storage.local.set({
+        latestReview: response.results,
+        currentPRData: prData,
+        qaHistory: [] // Reset Q&A history for new review
+      });
       showNotification('AI review complete! Check the side panel', 'success');
     } else if (response && (response.error || response.results?.error)) {
       // Get error from either location
