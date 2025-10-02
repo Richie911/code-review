@@ -197,6 +197,208 @@
       background: #f6f8fa;
       color: #57606a;
     }
+
+    /* Q&A Section Styles */
+    .qa-section {
+      background: white;
+      border-radius: 8px;
+      margin-top: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .qa-header {
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: opacity 0.2s;
+    }
+
+    .qa-header:hover {
+      opacity: 0.9;
+    }
+
+    .qa-header h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qa-toggle {
+      font-size: 20px;
+      transition: transform 0.3s;
+    }
+
+    .qa-toggle.collapsed {
+      transform: rotate(-90deg);
+    }
+
+    .qa-content {
+      padding: 16px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .qa-content.hidden {
+      display: none;
+    }
+
+    .qa-thread {
+      margin-bottom: 16px;
+    }
+
+    .qa-message {
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .qa-question {
+      background: #f0f4ff;
+      border-left: 3px solid #667eea;
+    }
+
+    .qa-question-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #667eea;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .qa-question-text {
+      font-size: 14px;
+      color: #24292f;
+      font-weight: 500;
+    }
+
+    .qa-answer {
+      background: #f6f8fa;
+      border-left: 3px solid #28a745;
+    }
+
+    .qa-answer-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #28a745;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .qa-answer-text {
+      font-size: 13px;
+      color: #57606a;
+      line-height: 1.6;
+    }
+
+    .qa-input-container {
+      border-top: 1px solid #e1e4e8;
+      padding-top: 12px;
+    }
+
+    .qa-textarea {
+      width: 100%;
+      min-height: 60px;
+      padding: 10px;
+      border: 2px solid #e1e4e8;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+
+    .qa-textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .qa-textarea:disabled {
+      background: #f6f8fa;
+      cursor: not-allowed;
+    }
+
+    .qa-button-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .qa-char-count {
+      font-size: 11px;
+      color: #57606a;
+    }
+
+    .qa-char-count.over-limit {
+      color: #cf222e;
+      font-weight: 600;
+    }
+
+    .qa-button {
+      padding: 8px 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .qa-button:hover:not(:disabled) {
+      background: #5568d3;
+    }
+
+    .qa-button:disabled {
+      background: #d0d7de;
+      cursor: not-allowed;
+    }
+
+    .qa-empty-state {
+      text-align: center;
+      padding: 20px;
+      color: #57606a;
+      font-size: 13px;
+    }
+
+    .qa-loading {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #fff3cd;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #856404;
+      margin-bottom: 12px;
+    }
+
+    .qa-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffc107;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
   </style>
 </head>
 <body>
@@ -225,6 +427,39 @@
       </svg>
       <h3>No review yet</h3>
       <p>Click the "AI Review" button on a PR page to get started</p>
+    </div>
+  </div>
+
+  <!-- Q&A Section (hidden by default, shown after review) -->
+  <div id="qaSection" class="qa-section" style="display: none;">
+    <div class="qa-header" id="qaHeader">
+      <h3>
+        <span>💬</span>
+        <span>Ask Questions About This Review</span>
+      </h3>
+      <span class="qa-toggle" id="qaToggle">▼</span>
+    </div>
+    <div class="qa-content" id="qaContent">
+      <div class="qa-thread" id="qaThread">
+        <div class="qa-empty-state">
+          Ask questions about the code review, security concerns, performance issues, or implementation details.
+        </div>
+      </div>
+      <div class="qa-input-container">
+        <textarea
+          id="qaTextarea"
+          class="qa-textarea"
+          placeholder="E.g., How can I fix the security vulnerability mentioned in section 4?"
+          maxlength="500"
+        ></textarea>
+        <div class="qa-button-container">
+          <span class="qa-char-count" id="qaCharCount">0 / 500</span>
+          <button class="qa-button" id="qaButton">
+            <span>Ask</span>
+            <span>→</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
