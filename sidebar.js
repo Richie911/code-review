@@ -175,7 +175,7 @@ function formatCodeReview(reviewText) {
     // Inline code (`code`)
     .replace(/`([^`]+)`/g, '<code style="background: #f6f8fa; padding: 2px 6px; border-radius: 3px; font-size: 85%; font-family: ui-monospace, monospace;">$1</code>')
     // Headers (## Header -> <h3>)
-    .replace(/^## (.+)$/gm, '<h3 style="font-size: 15px; font-weight: 600; margin: 16px 0 8px 0; color: #24292f; border-bottom: 1px solid #d0d7de; padding-bottom: 4px;">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h3 style="font-size: 15px; font-weight: 600; margin: 12px 0 6px 0; color: #24292f; border-bottom: 1px solid #d0d7de; padding-bottom: 4px;">$1</h3>')
     // Bold text (**text** -> <strong>)
     .replace(/\*\*(.+?)\*\*/g, '<strong style="font-weight: 600; color: #24292f;">$1</strong>')
     // Italic text (_text_ or *text*)
