@@ -98,6 +98,11 @@ async function handleAIReview() {
       // Silent fail
     }
 
+    // Set loading state in sidebar
+    chrome.storage.local.set({
+      latestReview: { loading: true }
+    });
+
     // Send to background script for AI analysis
     const response = await chrome.runtime.sendMessage({
       action: 'analyzePR',

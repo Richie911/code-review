@@ -103,6 +103,12 @@ async function checkAPIStatus() {
 }
 
 function displayReview(results) {
+  // Check for loading state
+  if (results.loading) {
+    showLoading();
+    return;
+  }
+
   if (results.error) {
     // Check if it's a download message
     if (results.error.includes('downloading')) {
