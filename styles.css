@@ -20,15 +20,15 @@
 
 /* GitHub styles */
 .btn.btn-sm#codereview-ai-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0969da 0%, #0550ae 100%);
   color: white;
-  border-color: #5a67d8;
+  border-color: #0969da;
 }
 
 .btn.btn-sm#codereview-ai-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #5a67d8 0%, #6b3fa0 100%);
-  border-color: #4c51bf;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, #0550ae 0%, #033d8b 100%);
+  border-color: #0550ae;
+  box-shadow: 0 2px 8px rgba(9, 105, 218, 0.3);
 }
 
 .btn.btn-sm#codereview-ai-button:active:not(:disabled) {
@@ -42,14 +42,14 @@
 
 /* GitLab styles */
 .btn.btn-default.btn-sm#codereview-ai-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0969da 0%, #0550ae 100%);
   color: white;
-  border-color: #5a67d8;
+  border-color: #0969da;
 }
 
 .btn.btn-default.btn-sm#codereview-ai-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #5a67d8 0%, #6b3fa0 100%);
-  border-color: #4c51bf;
+  background: linear-gradient(135deg, #0550ae 0%, #033d8b 100%);
+  border-color: #0550ae;
 }
 
 /* Notification styles are inline in content.js for better control */
