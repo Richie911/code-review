@@ -38,10 +38,11 @@ AI-powered code review assistant for GitHub and GitLab pull requests using Chrom
 
 ## 📋 Requirements
 
-- **Chrome Version**: Chrome 140+ (Stable or Canary)
-- **Operating System**: Windows, macOS, or Linux
+- **Chrome Version**: Chrome 128+ (Canary/Dev) or Chrome 138+ (Stable)
+- **Operating System**: Windows 10/11, macOS 13+, or Linux
 - **Internet Connection**: Required for initial AI model download (~3GB, one-time)
-- **Storage**: ~3GB free space for AI model
+- **Storage**: At least 22GB free space
+- **GPU**: 4GB+ VRAM recommended
 
 ## 🚀 Installation
 
@@ -66,18 +67,21 @@ AI-powered code review assistant for GitHub and GitLab pull requests using Chrom
 
 **This is critical! The extension won't work without this step.**
 
-1. Open a new tab and navigate to:
-   ```
-   chrome://flags/#prompt-api-for-gemini-nano-multimodal-input
-   ```
+1. Navigate to `chrome://flags` in a new tab
 
-2. Find **"Prompt API for Gemini Nano"**
+2. Search for and enable these two flags:
 
-3. Change the dropdown from **"Default"** to **"Enabled"**
+   **Flag 1: Optimization Guide**
+   - Search for: `Enables optimization guide on device`
+   - Set to: **Enabled BypassPerfRequirement**
 
-4. Click the **"Relaunch"** button that appears at the bottom
+   **Flag 2: Prompt API**
+   - Search for: `Prompt API for Gemini Nano with Multimodal Input`
+   - Set to: **Enabled**
 
-5. Chrome will restart with AI features enabled
+3. Click the **"Relaunch"** button that appears at the bottom
+
+4. Chrome will restart with AI features enabled
 
 ### Step 3: Download AI Model (First-Time Only)
 
@@ -153,8 +157,10 @@ After the review completes, you can ask follow-up questions:
 **Cause**: Chrome AI features not enabled or Chrome version too old
 
 **Solution**:
-1. Check Chrome version: `chrome://version/` (need Chrome 140+)
-2. Enable the flag: `chrome://flags/#prompt-api-for-gemini-nano-multimodal-input`
+1. Check Chrome version: `chrome://version/` (need Chrome 128+)
+2. Enable both flags in `chrome://flags`:
+   - `Enables optimization guide on device` → **Enabled BypassPerfRequirement**
+   - `Prompt API for Gemini Nano with Multimodal Input` → **Enabled**
 3. Relaunch Chrome completely
 4. Reload the extension in `chrome://extensions/`
 
@@ -271,28 +277,6 @@ Automatic detection ensures compatibility across Chrome versions.
 - **Chrome Storage API**: Persistent Q&A history
 - **Chrome Side Panel API**: Dedicated review UI
 
-## 🏆 Hackathon Submission
-
-Built for the **Google Chrome Built-in AI Challenge 2025**.
-
-**Submission Categories:**
-- 🥇 Most Helpful Chrome Extension
-- 🥈 Best Hybrid AI Application
-
-**Why CodeReview AI Stands Out:**
-- ✅ Solves real developer pain points (slow, inconsistent code reviews)
-- ✅ Privacy-first architecture (all local, no cloud)
-- ✅ Professional-grade review quality (9 structured sections)
-- ✅ Interactive Q&A for learning and problem-solving
-- ✅ Beautiful, polished UI with attention to detail
-- ✅ Works across Chrome versions (dual API support)
-
-**Impact:**
-- Democratizes senior-level code review expertise
-- Reduces PR review time from hours to seconds
-- Educational tool for junior developers
-- Catches bugs and security issues before merge
-
 ## 🚀 Future Enhancements
 
 ### Short-term
@@ -312,8 +296,6 @@ Built for the **Google Chrome Built-in AI Challenge 2025**.
 - [ ] CI/CD integration (auto-review on PR creation)
 - [ ] Team learning (improve AI from historical decisions)
 - [ ] Multi-language expansion (specialized frameworks)
-
-See [ABOUT.md](./ABOUT.md) for the full project story and development journey.
 
 ## 📄 License
 
